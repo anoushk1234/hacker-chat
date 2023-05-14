@@ -9,7 +9,7 @@ int main()
 	struct sockaddr_in serv_socket;
 	int socket_fd;
 	int conn_fd;
-
+	int users[100];
 	char message[100] = "";
 
 	serv_socket.sin_family = AF_INET;
@@ -34,10 +34,33 @@ int main()
 		{
 			while (recv(conn_fd, message, 100, 0) > 0)
 			{
-				printf("Message Received: %s\n", message);
+
+				append(users, conn_fd);
+				printf("server %i: %s\n", conn_fd, message);
+				for (size_t i = 0; i < users; i++)
+				{
+
+					if (users[i] != conn_fd)
+					{
+						send(users[i], message, strlen(message), 0);
+					}
+				}
+
 				// message="";
 			}
 			exit(0);
+		}
+	}
+}
+
+void append(int arr[], int *item)
+{
+	for (size_t i = 0; i < sizeof(arr) / sizeof(arr[0]); i++)
+	{
+		if (arr[i] == 0)
+		{
+			arr[i] = item;
+			return 0;
 		}
 	}
 }

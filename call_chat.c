@@ -3,7 +3,23 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <stdio.h>
+#include <pthread.h>
 
+void *recv_messages(char message[100], int socket_fd, int conn_fd)
+{
+    while (conn_fd = accept(socket_fd, (struct sockaddr *)NULL, NULL))
+    {
+        int pid;
+        if ((pid = fork()) == 0)
+        {
+            while (recv(conn_fd, message, 100, 0) > 0)
+            {
+                printf("Message Received: %s\n", message);
+            }
+            exit(0);
+        }
+    }
+}
 int main()
 {
     struct sockaddr_in serv; // This is our main socket variable.
@@ -18,6 +34,8 @@ int main()
     serv.sin_port = htons(8096);
     inet_pton(AF_INET, "127.0.0.1", &serv.sin_addr);     // This binds the client to localhost
     connect(fd, (struct sockaddr *)&serv, sizeof(serv)); // This connects the client to the server.
+
+    
     while (1)
     {
         printf("Enter a message: ");
@@ -25,4 +43,7 @@ int main()
         send(fd, message, strlen(message), 0);
         // An extra breaking condition can be added here (to terminate the while loop)
     }
+    pthread_t thread_id;
+    pthread_create(&thread_id, NULL, recv_messages(message, fd, conn), NULL);
+    pthread_join(thread_id, NULL);
 }
