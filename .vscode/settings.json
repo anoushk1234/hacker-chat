@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.mdx": "mdx",
+        "*.yml": "yaml",
+        "*.toml": "toml",
+        "unistd.h": "c",
+        "types.h": "c"
+    }
+}
